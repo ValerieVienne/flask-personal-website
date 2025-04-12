@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>About Me</h1>
+    <p>I am a software developer with a passion for fintech, data science, and full-stack development. Here's a bit about my background:</p>
+
+    <div class="mt-4  mb-5">
+        <a href="{{ url_for('static', filename='files/CV.pdf') }}" class="btn btn-outline-primary" download>
+            📄 Download My CV
+        </a>
+        <a href="https://www.linkedin.com/in/valerievienne9/" target="_blank" class="btn btn-outline-secondary ms-2">
+          <i class="bi bi-linkedin"></i> LinkedIn
+        </a>
+    </div>
+     
+
+        <h2>📌 Work Experience</h2>
+        <div class="mt-3  mb-5">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2025 - Present</div>
+                    <div class="timeline-content">
+                    <h5>Python Developer – Freelance</h5>
+                    <p>Building full-stack applications, automating finance workflows, and working with Flask, SQL, and APIs.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2023 - 2025</div>
+                    <div class="timeline-content">
+                    <h5>IT Finance Business Analyst - Amundi Austria</h5>
+                    <p>Business analyst for Alto Wealth HVB premiere (Discretionary Portfolio Management solution) and Alto Trading for IT support and development activities.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2021 - 2022</div>
+                    <div class="timeline-content">
+                    <h5>Business Analyst in Sales - HP France</h5>
+                    <p>Worked on HP’s Top Global Accounts in Sales Execution and Business Processes improvement.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2020</div>
+                    <div class="timeline-content">
+                    <h5>Graduation Internship - Rolls-Royce Motor Cars England</h5>
+                    <p>Focused on Scrum implementation for bespoke leather projects development activities and training the team.</p>
+                    </div>
+                </div>   
+                <div class="timeline-item">
+                    <div class="timeline-date">2019</div>
+                    <div class="timeline-content">
+                    <h5>Junior Consulting - Deloitte Digital France</h5>
+                    <p>Scrum master for a website development project. Facilitator in design thinking workshops Contribution to write commercial propositions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <h2>🎓 Education</h2>
+    <div class="mt-3  mb-5">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">2020-2022</div>
+                <div class="timeline-content">
+                <h5>Master in Management EDHEC Business School - France</h5>
+                <p> MSc In Financial Management major in Capital Markets. Project Management, Innovation, Strategy, Fixed Income, VBA, Power BI</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">2017-2020</div>
+                <div class="timeline-content">
+                <h5>ENSEA Engineering Degree in Electrical and Computer Science - France</h5>
+                <p>Focused on Signal, Artificial Intelligence and IoT systems. General knowledge about all electronics systems.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">2018</div>
+                <div class="timeline-content">
+                <h5>Summer Program - Wuhan University China</h5>
+                <p>Focused on Data Mining and Machine Learning courses and project.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">2014 - 2017</div>
+                <div class="timeline-content">
+                <h5>Bachelor's in Science and Computer Science PSI* - France</h5>
+                <p>Learned maths, physics, fundamental algorithms and SQL databases.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <h2 class="mt-5">🌍 International Background</h2>
+    <p>I’ve had the opportunity to study and work across several countries, enriching my technical and cultural perspective:</p>
+
+    <!-- World map image -->
+    <img src="{{ url_for('static', filename='images/worldmap.png') }}" alt="International Experience Map" class="img-fluid mb-4 shadow rounded">
+
+    <!-- Flag Timeline -->
+    <div class="timeline">
+    <div class="timeline-item">
+        <div class="timeline-date">🇫🇷 France</div>
+        <div class="timeline-content">
+        <h5>Birthplace, Studies & Work</h5>
+        <p>Studied CS & Data Science, worked on several projects and internships in Paris and Lyon.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">🇦🇹 Austria</div>
+        <div class="timeline-content">
+        <h5>Current Role in Vienna</h5>
+        <p>Living and working here for 2+ years, contributing to fintech software and growing my European network.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">🇬🇧 United Kingdom</div>
+        <div class="timeline-content">
+        <h5>Internship Experience</h5>
+        <p>Worked in a tech consulting firm in London during summer, focusing on data-driven decisions.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">🇨🇳 China</div>
+        <div class="timeline-content">
+        <h5>International Internship</h5>
+        <p>Gained global business experience in Shanghai, adapting to a fast-paced and diverse environment.</p>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
