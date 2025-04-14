@@ -92,10 +92,10 @@ def sitemap():
 def robots():
     return send_from_directory('static', 'robots.txt')
 
-@app.before_request
-def redirect_to_www():
-    if request.host == "valerie-vienne.com":
-        return redirect(request.url.replace("valerie-vienne.com", "www.valerie-vienne.com"), code=301)
+#@app.before_request
+#def redirect_to_www():
+#    if request.host == "valerie-vienne.com":
+#        return redirect(request.url.replace("valerie-vienne.com", "www.valerie-vienne.com"), code=301)
 
 
 if __name__ == '__main__':
