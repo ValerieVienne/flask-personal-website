@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://valerie-vienne-tech.onrender.com/sitemap.xml
