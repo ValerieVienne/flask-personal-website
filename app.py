@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_from_directory
 from forms import ContactForm
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message
@@ -82,7 +82,21 @@ def contact():
         print("Form submitted:", form.validate_on_submit())
         print(form.errors)
         return redirect(url_for('contact'))
-    return render_template('contact.html', form=form)
+    return render_template('contact.html', form=form, submitted=True)
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
+
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory('static', 'robots.txt')
+
+@app.before_request
+def redirect_to_www():
+    if request.host == "valerie-vienne.com":
+        return redirect(request.url.replace("valerie-vienne.com", "www.valerie-vienne.com"), code=301)
+
 
 
 if __name__ == '__main__':

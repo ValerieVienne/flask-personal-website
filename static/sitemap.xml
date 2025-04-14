@@ -2,25 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://valerie-vienne-tech.onrender.com/</loc>
+    <loc>https://valerie-vienne.com/</loc>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
   </url>
 
   <url>
-    <loc>https://valerie-vienne-tech.onrender.com/about</loc>
+    <loc>https://valerie-vienne.com/about</loc>
     <priority>0.9</priority>
     <changefreq>monthly</changefreq>
   </url>
 
   <url>
-    <loc>https://valerie-vienne-tech.onrender.com//projects</loc>
+    <loc>https://valerie-vienne.com/projects</loc>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/contact</loc>
+    <loc>https://valerie-vienne.com/contact</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
