@@ -9,6 +9,14 @@
         {% endfor %}
     {% endif %}
     {% endwith %}
+    {% if submitted %}
+    <script>
+        gtag('event', 'submit_contact_form', {
+            event_category: 'engagement',
+            event_label: 'Contact Page'
+        });
+    </script>
+    {% endif %}
     <div class="row">
       <div class="col-md-6">
         <form method="POST" novalidate>

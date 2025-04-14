@@ -5,10 +5,18 @@
     <p>I am a software developer with a passion for fintech, data science, and full-stack development. Here's a bit about my background:</p>
 
     <div class="mt-4  mb-5">
-        <a href="{{ url_for('static', filename='files/CV.pdf') }}" class="btn btn-outline-primary" download>
+        <a href="{{ url_for('static', filename='files/CV.pdf') }}" class="btn btn-outline-primary"
+        download
+        onclick="gtag('event', 'download_cv', {
+            'event_category': 'engagement',
+            'event_label': 'CV Download'
+        });">
             📄 Download My CV
         </a>
-        <a href="https://www.linkedin.com/in/valerievienne9/" target="_blank" class="btn btn-outline-secondary ms-2">
+        <a href="https://www.linkedin.com/in/valerievienne9/" target="_blank" class="btn btn-outline-secondary ms-2" onclick="gtag('event', 'click_linkedin', {
+            event_category: 'external_link',
+            event_label: 'LinkedIn Button'
+        });">
           <i class="bi bi-linkedin"></i> LinkedIn
         </a>
     </div>
