@@ -98,7 +98,6 @@ def redirect_to_www():
         return redirect(request.url.replace("valerie-vienne.com", "www.valerie-vienne.com"), code=301)
 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
 
