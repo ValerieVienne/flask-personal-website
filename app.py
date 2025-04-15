@@ -29,6 +29,10 @@ app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side storage
 app.config['SESSION_PERMANENT'] = False    # Sessions expire when browser closes
 app.config['SESSION_FILE_DIR'] = './flask_session_data'  # Optional: where to store
 
+app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_SITE_KEY')
+app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY')
+
+
 # Init the session
 Session(app)
 
@@ -60,14 +64,17 @@ def projects():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
-
-    print("Request method:", request.method)
-    print("Form submitted:", form.validate_on_submit())
-    print("Form errors:", form.errors)
+    submitted = False
+    #recaptcha= form.recaptcha.data
+#    print("Request method:", request.method)
+#    print("Form submitted:", form.validate_on_submit())
+#    print("Form errors:", form.errors)
+    #print(recaptcha)
     if form.validate_on_submit():
         name = form.name.data
         email = form.email.data
         message_body = form.message.data
+        #recaptcha= form.recaptcha.data
 
         msg = Message(f"New Contact Form Message from {name}",
                       recipients=[app.config['MAIL_USERNAME']])
@@ -76,13 +83,21 @@ def contact():
         try:
             mail.send(msg)
             flash('Your message has been sent successfully!', 'success')
+            submitted = True
         except Exception as e:
-            print(f"Error sending email: {e}")
+#            print(f"Error sending email: {e}")
             flash('There was an error sending your message. Please try again later.', 'danger')
-        print("Form submitted:", form.validate_on_submit())
-        print(form.errors)
+#        print("Form submitted:", form.validate_on_submit())
+#        print(form.errors)
         return redirect(url_for('contact'))
-    return render_template('contact.html', form=form, submitted=True)
+    # Optional: show flash only on POST failure
+    elif request.method == 'POST':
+        flash('Please fix the errors in the form before submitting.', 'danger')
+
+#        print("Form errors:", form.errors)
+
+  #      flash('reCAPTCHA verification failed. Please try again.', 'danger')   
+    return render_template('contact.html', form=form)
 
 @app.route('/sitemap.xml')
 def sitemap():
