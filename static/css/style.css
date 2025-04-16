@@ -3,23 +3,57 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #f4f7fa;
     color: #2c2c2c;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+body.light {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+body.dark {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+
+/* Typography */
 h1, h2, h3 {
     font-family: 'Poppins', sans-serif;
     color: #1a1f36;
 }
+
+body.dark h1,
+body.dark h2,
+body.dark h3 {
+    color: #ffffff;
+}
+
+/* hero section */
+.hero {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+body.dark .hero h1, body.dark .hero p{
+    color: #1a1f36;
+}
+
+/* Navbar */
 .navbar {
     background-color: #1a1f36;
 }
 .navbar a {
     color: #ffffff !important;
 }
+/* Links */
 a {
     color: #00aaff;
 }
 a:hover {
     color: #24d1b5;
 }
+
+/* Timeline */
 .timeline {
     position: relative;
     padding: 1rem 0;
@@ -54,12 +88,14 @@ a:hover {
     border-radius: 50%;
 }
 
+/* Images */
 img {
     max-width: 100%;
     height: auto;
     border-radius: 12px;
 }
 
+/* Cards & Carousel */
 .card {
     border-radius: 16px;
 }
@@ -71,6 +107,7 @@ img {
     max-height: 300px;
 }
 
+/* Bootstrap icons */
 .bi {
     transition: transform 0.3s ease;
 }

@@ -38,7 +38,7 @@
     </script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body>
+<body class="" id="theme-body">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand text-white" href="/">My Portfolio</a>
@@ -47,6 +47,9 @@
                 <a class="nav-link" href="/about">About</a>
                 <a class="nav-link" href="/projects">Projects</a>
                 <a class="nav-link" href="/contact">Contact</a>
+                <button class="btn btn-outline-light ms-3" id="theme-toggle" title="Toggle Dark/Light Mode">
+                    <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
+                </button>                
             </div>
         </div>
     </nav>
@@ -62,6 +65,50 @@
 <script>
   AOS.init();
 </script>
+<script>
+    const body = document.getElementById('theme-body');
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
   
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      body.classList.add(savedTheme);
+      document.querySelector('.navbar').classList.add(savedTheme);
+      updateIcon(savedTheme);
+    } else {
+      // Default to light mode
+      body.classList.add('light');
+      document.querySelector('.navbar').classList.add('light');
+    }
+  
+    toggleBtn.addEventListener('click', () => {
+      if (body.classList.contains('dark')) {
+        body.classList.remove('dark');
+        body.classList.add('light');
+        document.querySelector('.navbar').classList.remove('dark');
+        document.querySelector('.navbar').classList.add('light');
+        localStorage.setItem('theme', 'light');
+        updateIcon('light');
+      } else {
+        body.classList.remove('light');
+        body.classList.add('dark');
+        document.querySelector('.navbar').classList.remove('light');
+        document.querySelector('.navbar').classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        updateIcon('dark');
+      }
+    });
+  
+    function updateIcon(theme) {
+      if (theme === 'dark') {
+        themeIcon.classList.remove('bi-moon-stars-fill');
+        themeIcon.classList.add('bi-brightness-high-fill');
+      } else {
+        themeIcon.classList.remove('bi-brightness-high-fill');
+        themeIcon.classList.add('bi-moon-stars-fill');
+      }
+    }
+  </script>  
 </body>
 </html>
