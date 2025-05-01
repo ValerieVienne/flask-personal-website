@@ -56,8 +56,7 @@ def about():
 @app.route('/projects')
 def projects():
     my_projects = [
-        {"title": "Chatbot with GPT", "description": "Built with OpenAI API."},
-        {"title": "Weather App", "description": "Uses Flask and OpenWeatherMap API."},
+        {"title": "Chatbot with GPT", "description": "Built with OpenAI API. #WORK IN PROGRESS"},        
     ]
     return render_template('projects.html', projects=my_projects)
 
@@ -91,8 +90,8 @@ def contact():
 #        print(form.errors)
         return redirect(url_for('contact'))
     # Optional: show flash only on POST failure
-    elif request.method == 'POST':
-        flash('Please fix the errors in the form before submitting.', 'danger')
+    #elif request.method == 'POST':
+    #    flash('Please fix the errors in the form before submitting.', 'danger')
 
 #        print("Form errors:", form.errors)
 
