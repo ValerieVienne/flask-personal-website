@@ -3,6 +3,9 @@
 <div class="container">
     <h1>Projects</h1>
     <ul>
+      <li><strong>Valérie's Kitchen — LLM Chatbot</strong>: A personalised AI cooking assistant built with GPT and Streamlit.</li>
+      <li><strong>VerdureAsk — Bilingual RAG Chatbot</strong>: A bilingual Retrieval-Augmented Generation (RAG) customer-support chatbot.</li>
+      <li><strong>Clairvoyant — Global Sector Intelligence Agent</strong>: An agentic stock research tool covering US, European, Asian, Indian and Chinese markets across eight sectors.</li>
       <li><strong>Portfolio Website</strong>: This website! Built using Flask, HTML, CSS, and Bootstrap.</li>
       <li><strong>Stock Sentiment Tracker</strong>: Stock sentiment analysis and recommendation based on news and social media (reddit).</li>
       <li><strong>Weather App</strong>: Uses Flask and OpenWeatherMap API.</li>
@@ -14,6 +17,117 @@
     </ul>
     <div class="container my-5">
       <!-- <h2>My Projects</h2>-->
+
+      <div class="card mb-5 shadow-sm">
+        <div class="row g-0">
+          <div class="col-md-6">
+            <!-- Slideshow -->
+            <div id="project6Carousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="{{ url_for('static', filename='images/project6/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project6/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project6/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#project6Carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#project6Carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6 p-4">
+            <h4>Valérie's Kitchen — LLM Chatbot</h4>
+            <p>A personalised AI cooking assistant built with GPT and Streamlit. Shows how a generic LLM becomes a focused product through prompt engineering alone: French, Asian and Mediterranean cuisine influences, known pantry staples, vegetarian-first suggestions and natural wine pairings. Includes prompt-injection and off-topic guardrails, response caching, context-window trimming, a session message limit and cost controls.</p>
+            <a href="https://github.com/ValerieVienne/valerie-kitchen" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
+              event_category: 'portfolio',
+              event_label: 'Valerie Kitchen LLM Chatbot'
+            });">GitHub</a>
+            <a href="https://valerie-kitchen.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-5 shadow-sm">
+        <div class="row g-0">
+          <div class="col-md-6">
+            <!-- Slideshow -->
+            <div id="project7Carousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="{{ url_for('static', filename='images/project7/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project7/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project7/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#project7Carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#project7Carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6 p-4">
+            <h4>VerdureAsk — Bilingual RAG Chatbot</h4>
+            <p>A bilingual Retrieval-Augmented Generation (RAG) customer-support chatbot. FAQ content is chunked and embedded (text-embedding-3-small), the most relevant passages are retrieved by cosine similarity, and GPT answers using only that context to avoid hallucinations. Built with Streamlit, the OpenAI API and NumPy, with a security guardrail, response caching and cost controls. Adapting it to a new client only requires replacing the FAQ file.</p>
+            <a href="https://github.com/ValerieVienne/VerdureAsk_RAG" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
+              event_category: 'portfolio',
+              event_label: 'VerdureAsk RAG'
+            });">GitHub</a>
+            <a href="https://verdureask-rag.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-5 shadow-sm">
+        <div class="row g-0">
+          <div class="col-md-6">
+            <!-- Slideshow -->
+            <div id="project8Carousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="{{ url_for('static', filename='images/project8/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project8/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='images/project8/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#project8Carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#project8Carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6 p-4">
+            <h4>Clairvoyant — Global Sector Intelligence Agent</h4>
+            <p>An agentic stock research tool covering US, European, Asian, Indian and Chinese markets across eight sectors. The agent discovers and ranks companies from real market data (yfinance, live FX rates, Wikipedia) and normalises every monetary metric to USD before ranking. GPT is used only to write the comparison table and investor briefing, so it never invents a ticker or a figure. Built with Python, Streamlit, Pandas and the OpenAI API.</p>
+            <a href="https://github.com/ValerieVienne/clairvoyant_stocks_sector" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
+              event_category: 'portfolio',
+              event_label: 'Clairvoyant Agent'
+            });">GitHub</a>
+            <a href="https://clairvoyant-stocks-sector.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
+          </div>
+        </div>
+      </div>
 
       <div class="card mb-5 shadow-sm">
         <div class="row g-0">
