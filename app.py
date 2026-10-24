@@ -7,6 +7,7 @@ from flask_session import Session
 import os
 import socket
 import secrets
+import gmail_api
 #print(secrets.token_hex(32))
 
 #.venv\Scripts\activate
@@ -38,8 +39,12 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY')
 socket.setdefaulttimeout(15)
 
 # Make missing configuration obvious in the logs at startup.
-_required_env = ['SECRET_KEY', 'MAIL_USERNAME', 'MAIL_PASSWORD',
+_required_env = ['SECRET_KEY', 'MAIL_USERNAME',
                  'RECAPTCHA_SITE_KEY', 'RECAPTCHA_SECRET_KEY']
+if not gmail_api.is_configured():
+    # Without the Gmail API settings the app falls back to SMTP, which needs a
+    # password (and is blocked on Render's free tier).
+    _required_env.append('MAIL_PASSWORD')
 _missing_env = [name for name in _required_env if not os.getenv(name)]
 if _missing_env:
     app.logger.warning("Missing environment variables: %s", ", ".join(_missing_env))
@@ -87,12 +92,23 @@ def contact():
         message_body = form.message.data
         #recaptcha= form.recaptcha.data
 
-        msg = Message(f"New Contact Form Message from {name}",
-                      recipients=[app.config['MAIL_USERNAME']])
-        msg.body = f"From: {name} <{email}>\n\nMessage:\n{message_body}"
-        
+        subject = f"New Contact Form Message from {name}"
+        body = f"From: {name} <{email}>\n\nMessage:\n{message_body}"
+
         try:
-            mail.send(msg)
+            if gmail_api.is_configured():
+                # HTTPS - works on Render's free tier
+                gmail_api.send_email(
+                    to=app.config['MAIL_USERNAME'],
+                    subject=subject,
+                    body=body,
+                    reply_to=email,
+                )
+            else:
+                # SMTP fallback (fine locally; blocked on Render's free tier)
+                msg = Message(subject, recipients=[app.config['MAIL_USERNAME']])
+                msg.body = body
+                mail.send(msg)
             flash('Your message has been sent successfully!', 'success')
             submitted = True
         except Exception:
