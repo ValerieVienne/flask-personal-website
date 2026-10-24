@@ -3,7 +3,8 @@
 
 Run this on YOUR computer (not on the server):
 
-    python tools/get_gmail_refresh_token.py
+    python tools/get_gmail_refresh_token.py          # narrowest scope: send to yourself only
+    python tools/get_gmail_refresh_token.py --full   # fallback: gmail.send
 
 It asks for the OAuth client ID and secret (Desktop app type) from Google
 Cloud, opens your browser so you can approve "send email" access for your
@@ -13,6 +14,7 @@ except to Google.
 
 Standard library only.
 """
+import argparse
 import getpass
 import http.server
 import json
@@ -22,7 +24,11 @@ import urllib.parse
 import urllib.request
 import webbrowser
 
-SCOPE = "https://www.googleapis.com/auth/gmail.send"  # can only SEND mail, not read it
+# Narrowest option: the app can only send email to the account owner (the contact
+# form only ever emails you). Neither scope lets the app read your mailbox.
+SCOPE_SELF = "https://www.googleapis.com/auth/gmail.send.self"
+# Fallback if Google's send endpoint rejects the .self scope: send as you, to anyone.
+SCOPE_FULL = "https://www.googleapis.com/auth/gmail.send"
 AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 PORT = 8765
@@ -61,6 +67,13 @@ def wait_for_redirect(expected_state):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--full", action="store_true",
+                        help="request gmail.send instead of the narrower gmail.send.self")
+    args = parser.parse_args()
+    scope = SCOPE_FULL if args.full else SCOPE_SELF
+    print(f"Requesting scope: {scope}")
+
     client_id = input("OAuth client ID: ").strip()
     client_secret = getpass.getpass("OAuth client secret (typing is hidden): ").strip()
 
@@ -69,7 +82,7 @@ def main():
         "client_id": client_id,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
-        "scope": SCOPE,
+        "scope": scope,
         "access_type": "offline",   # needed to get a refresh token
         "prompt": "consent",        # forces Google to issue a refresh token
         "state": state,
