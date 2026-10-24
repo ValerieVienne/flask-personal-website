@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 from dotenv import load_dotenv
 from flask_session import Session
 import os
+import socket
 import secrets
 #print(secrets.token_hex(32))
 
@@ -31,6 +32,17 @@ app.config['SESSION_FILE_DIR'] = './flask_session_data'  # Optional: where to st
 
 app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_SITE_KEY')
 app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY')
+
+# Don't let SMTP (or any other socket) hang forever; a hung worker is killed
+# by gunicorn after 30s and the visitor sees an error page.
+socket.setdefaulttimeout(15)
+
+# Make missing configuration obvious in the logs at startup.
+_required_env = ['SECRET_KEY', 'MAIL_USERNAME', 'MAIL_PASSWORD',
+                 'RECAPTCHA_SITE_KEY', 'RECAPTCHA_SECRET_KEY']
+_missing_env = [name for name in _required_env if not os.getenv(name)]
+if _missing_env:
+    app.logger.warning("Missing environment variables: %s", ", ".join(_missing_env))
 
 
 # Init the session
@@ -83,8 +95,10 @@ def contact():
             mail.send(msg)
             flash('Your message has been sent successfully!', 'success')
             submitted = True
-        except Exception as e:
-#            print(f"Error sending email: {e}")
+        except Exception:
+            # Log the real cause (SMTP auth, blocked port, timeout...) so it
+            # shows up in the hosting provider's logs instead of vanishing.
+            app.logger.exception("Contact form: sending email failed")
             flash('There was an error sending your message. Please try again later.', 'danger')
 #        print("Form submitted:", form.validate_on_submit())
 #        print(form.errors)
