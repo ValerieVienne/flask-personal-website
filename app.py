@@ -70,6 +70,10 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html', title="Privacy Policy")
+
 @app.route('/projects')
 def projects():
     my_projects = [
