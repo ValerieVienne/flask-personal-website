@@ -1,363 +1,187 @@
 {% extends "base.html" %}
 {% block content %}
+
+{#
+  HOW TO ADD A PROJECT
+  1. Put 3 screenshots in static/images/<folder>/shot1.jpg, shot2.jpg, shot3.jpg
+  2. Copy one of the {% call project_card(...) %} blocks below and change:
+       slug    -> unique short id (used for the carousel; never reuse one)
+       folder  -> the images folder from step 1
+       roles   -> space-separated: ai-eng  fde  ba  dev
+       domain  -> e.g. Finance, Health, Energy, Entertainment (filter buttons are created automatically)
+       github / demo -> leave out while the link does not exist yet
+       wip=True      -> shows a "Work in progress" badge and a "Coming soon" button
+  3. Put the description between {% call %} and {% endcall %}
+#}
+
+{% macro project_card(slug, folder, title, roles, domain, github=None, demo=None, label=None, wip=False) %}
+{% set role_labels = {
+    'ai-eng': ['AI Engineer', 'bg-primary'],
+    'fde': ['Forward Deployed Eng.', 'bg-success'],
+    'ba': ['AI Business Analyst', 'bg-warning text-dark'],
+    'dev': ['Data / Dev', 'bg-secondary']
+} %}
+<div class="card mb-5 shadow-sm project-card" data-roles="{{ roles }}" data-domain="{{ domain }}">
+  <div class="row g-0">
+    <div class="col-md-6">
+      <!-- Slideshow -->
+      <div id="carousel-{{ slug }}" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          {% for n in [1, 2, 3] %}
+          <div class="carousel-item{% if n == 1 %} active{% endif %}">
+            <img src="{{ url_for('static', filename='images/' ~ folder ~ '/shot' ~ n ~ '.jpg') }}" class="d-block w-100" alt="{{ title }} - screenshot {{ n }}">
+          </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ slug }}" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ slug }}" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-6 p-4">
+      <h4>{{ title }}</h4>
+      <div class="mb-2">
+        {% for r in roles.split() %}
+          {% if r in role_labels %}
+          <span class="badge {{ role_labels[r][1] }} me-1">{{ role_labels[r][0] }}</span>
+          {% endif %}
+        {% endfor %}
+        <span class="badge bg-light text-dark border me-1">{{ domain }}</span>
+        {% if wip %}<span class="badge bg-info text-dark">Work in progress</span>{% endif %}
+      </div>
+      <p>{{ caller() }}</p>
+      {% if github %}
+      <a href="{{ github }}" target="_blank" rel="noopener" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
+        event_category: 'portfolio',
+        event_label: '{{ label or title }}'
+      });">GitHub</a>
+      {% endif %}
+      {% if demo %}
+      <a href="{{ demo }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">Live Demo</a>
+      {% endif %}
+      {% if wip and not github and not demo %}
+      <button type="button" class="btn btn-outline-secondary btn-sm" disabled>Coming soon</button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
 <div class="container">
     <h1>Projects</h1>
-    <ul>
-      <li><strong>Valérie's Kitchen — LLM Chatbot</strong>: A personalised AI cooking assistant built with GPT and Streamlit.</li>
-      <li><strong>VerdureAsk — Bilingual RAG Chatbot</strong>: A bilingual Retrieval-Augmented Generation (RAG) customer-support chatbot.</li>
-      <li><strong>Clairvoyant — Global Sector Intelligence Agent</strong>: An agentic stock research tool covering US, European, Asian, Indian and Chinese markets across eight sectors.</li>
-      <li><strong>Portfolio Website</strong>: This website! Built using Flask, HTML, CSS, and Bootstrap.</li>
-      <li><strong>Stock Sentiment Tracker</strong>: Stock sentiment analysis and recommendation based on news and social media (reddit).</li>
-      <li><strong>Weather App</strong>: Uses Flask and OpenWeatherMap API.</li>
-      <li><strong>DISCLAIMER : some links are not working yet because #WORK IN PROGRESS</strong>
-      <li><strong>Budget Analyzer</strong>: Personal finance analysis tool built with Python and Pandas.  #WORK IN PROGRESS</li>
-      {% for project in projects %}
-        <li><strong>{{ project.title }}</strong>: {{ project.description }}</li>
-      {% endfor %}
-    </ul>
+    <p>AI, data and automation projects across finance and beyond. Filter by the role a project shows, or by domain.</p>
+
+    <!-- Filters (domain buttons are generated from the cards below) -->
+    <div class="mb-4" id="project-filters">
+      <div class="mb-2">
+        <span class="fw-semibold me-2">Role:</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1 active" data-group="role" data-value="all">All</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1" data-group="role" data-value="ai-eng">AI Engineer</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1" data-group="role" data-value="fde">Forward Deployed Eng.</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1" data-group="role" data-value="ba">AI Business Analyst</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1" data-group="role" data-value="dev">Data / Dev</button>
+      </div>
+      <div>
+        <span class="fw-semibold me-2">Domain:</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn me-1 mb-1 active" data-group="domain" data-value="all">All</button>
+        <span id="domain-buttons"></span>
+      </div>
+    </div>
+
     <div class="container my-5">
-      <!-- <h2>My Projects</h2>-->
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project6Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project6/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project6/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project6/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project6Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project6Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
+      {% call project_card(slug='kitchen', folder='project6', title="Valérie's Kitchen — LLM Chatbot", roles='ai-eng fde', domain='Food & Lifestyle',
+                           github='https://github.com/ValerieVienne/valerie-kitchen', demo='https://valerie-kitchen.streamlit.app/', label='Valerie Kitchen LLM Chatbot') %}
+        A personalised AI cooking assistant built with GPT and Streamlit. Shows how a generic LLM becomes a focused product through prompt engineering alone: French, Asian and Mediterranean cuisine influences, known pantry staples, vegetarian-first suggestions and natural wine pairings. Includes prompt-injection and off-topic guardrails, response caching, context-window trimming, a session message limit and cost controls.
+      {% endcall %}
 
-          <div class="col-md-6 p-4">
-            <h4>Valérie's Kitchen — LLM Chatbot</h4>
-            <p>A personalised AI cooking assistant built with GPT and Streamlit. Shows how a generic LLM becomes a focused product through prompt engineering alone: French, Asian and Mediterranean cuisine influences, known pantry staples, vegetarian-first suggestions and natural wine pairings. Includes prompt-injection and off-topic guardrails, response caching, context-window trimming, a session message limit and cost controls.</p>
-            <a href="https://github.com/ValerieVienne/valerie-kitchen" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Valerie Kitchen LLM Chatbot'
-            });">GitHub</a>
-            <a href="https://valerie-kitchen.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
+      {% call project_card(slug='verdureask', folder='project7', title='VerdureAsk — Bilingual RAG Chatbot', roles='ai-eng fde', domain='Customer Support',
+                           github='https://github.com/ValerieVienne/VerdureAsk_RAG', demo='https://verdureask-rag.streamlit.app/', label='VerdureAsk RAG') %}
+        A bilingual Retrieval-Augmented Generation (RAG) customer-support chatbot. FAQ content is chunked and embedded (text-embedding-3-small), the most relevant passages are retrieved by cosine similarity, and GPT answers using only that context to avoid hallucinations. Built with Streamlit, the OpenAI API and NumPy, with a security guardrail, response caching and cost controls. Adapting it to a new client only requires replacing the FAQ file.
+      {% endcall %}
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project7Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project7/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project7/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project7/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project7Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project7Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
+      {% call project_card(slug='clairvoyant', folder='project8', title='Clairvoyant — Global Sector Intelligence Agent', roles='ai-eng ba', domain='Finance',
+                           github='https://github.com/ValerieVienne/clairvoyant_stocks_sector', demo='https://clairvoyant-stocks-sector.streamlit.app/', label='Clairvoyant Agent') %}
+        An agentic stock research tool covering US, European, Asian, Indian and Chinese markets across eight sectors. The agent discovers and ranks companies from real market data (yfinance, live FX rates, Wikipedia) and normalises every monetary metric to USD before ranking. GPT is used only to write the comparison table and investor briefing, so it never invents a ticker or a figure. Built with Python, Streamlit, Pandas and the OpenAI API.
+      {% endcall %}
 
-          <div class="col-md-6 p-4">
-            <h4>VerdureAsk — Bilingual RAG Chatbot</h4>
-            <p>A bilingual Retrieval-Augmented Generation (RAG) customer-support chatbot. FAQ content is chunked and embedded (text-embedding-3-small), the most relevant passages are retrieved by cosine similarity, and GPT answers using only that context to avoid hallucinations. Built with Streamlit, the OpenAI API and NumPy, with a security guardrail, response caching and cost controls. Adapting it to a new client only requires replacing the FAQ file.</p>
-            <a href="https://github.com/ValerieVienne/VerdureAsk_RAG" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'VerdureAsk RAG'
-            });">GitHub</a>
-            <a href="https://verdureask-rag.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
+      {% call project_card(slug='portfolio', folder='project1', title='Portfolio Website', roles='dev', domain='Web',
+                           github='https://github.com/ValerieVienne/flask-personal-website', demo='https://valerie-vienne.com/', label='Portfolio Website') %}
+        This website! Built using Flask, HTML, CSS, and Bootstrap. Includes user contact form to contact me, my linkedin and CV to download. A dark mode is available.
+      {% endcall %}
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project8Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project8/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project8/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project8/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project8Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project8Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
+      {% call project_card(slug='stock-sentiment', folder='project2', title='Stock Sentiment Tracker', roles='ai-eng', domain='Finance',
+                           github='https://github.com/ValerieVienne/stock-sentiment-streamlit', demo='https://stock-sentiment-streamlit.onrender.com/', label='Stock Tracker') %}
+        Real-time stock sentiment analysis and recommendation based on Yahoo finance news, Google news and Reddit. Built with python Vader sentiment analysis and Streamlit for a smooth and interactive experience.
+      {% endcall %}
 
-          <div class="col-md-6 p-4">
-            <h4>Clairvoyant — Global Sector Intelligence Agent</h4>
-            <p>An agentic stock research tool covering US, European, Asian, Indian and Chinese markets across eight sectors. The agent discovers and ranks companies from real market data (yfinance, live FX rates, Wikipedia) and normalises every monetary metric to USD before ranking. GPT is used only to write the comparison table and investor briefing, so it never invents a ticker or a figure. Built with Python, Streamlit, Pandas and the OpenAI API.</p>
-            <a href="https://github.com/ValerieVienne/clairvoyant_stocks_sector" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Clairvoyant Agent'
-            });">GitHub</a>
-            <a href="https://clairvoyant-stocks-sector.streamlit.app/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
+      {% call project_card(slug='weather', folder='project3', title='Weather App', roles='dev', domain='Weather',
+                           github='https://github.com/ValerieVienne/weather-app', demo='https://weather-app-mfea.onrender.com/', label='Weather App') %}
+        Real-time Weather app dashboard using Flask and OpenWeatherMap API. Includes user email notifications. The user gets the current weather, 5 days forecast and next hourly forecast for rain prediction. An interactive graph of the temperature and wind (min, max and avg) forecast is displayed.
+      {% endcall %}
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project1Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project1/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project1/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project1/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project1Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project1Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Portfolio Website</h4>
-            <p>This website! Built using Flask, HTML, CSS, and Bootstrap. Includes user contact form to contact me, my linkedin and CV to download. A dark mode is available.</p>
-            <a href="https://github.com/ValerieVienne/flask-personal-website" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Smart Budget App'
-            });">
-            GitHub</a>
-            <a href="https://valerie-vienne.com/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
-      
+      {# TODO: this card still reuses the Portfolio Website screenshots (project1) and has no GitHub link yet.
+         Add 3 screenshots in static/images/project9/, then change folder='project1' to folder='project9', and add github='...' #}
+      {% call project_card(slug='milestone', folder='project1', title='Financial Milestone Explorer', roles='ba dev', domain='Finance',
+                           demo='https://financial-milestone-explorer.onrender.com/', label='Financial Milestone Explorer') %}
+        A clean, interactive decision tool built with Python and Streamlit that visualizes the path to major life goals like home ownership and financial independence. By modeling dynamic income and investment scenarios, the app transforms static projections into a real-time "What-If" explorer, allowing users to see exactly how shifting their savings rate or market returns impacts their timeline to wealth.
+      {% endcall %}
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project2Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project2/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project2/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project2/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project2Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project2Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Stock Sentiment Tracker</h4>
-            <p>Real-time stock sentiment analysis and recommendation based on Yahoo finance news, Google news and Reddit. Built with python Vader sentiment analysis and Streamlit for a smooth and interactive experience.</p>
-            <a href="https://github.com/ValerieVienne/stock-sentiment-streamlit" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Stock Tracker'
-            });">GitHub</a>
-            <a href="https://stock-sentiment-streamlit.onrender.com/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
+      {% call project_card(slug='web-scraper', folder='project4', title='Web Scraper for Finance', roles='dev', domain='Finance', wip=True, label='Web Scraper for Finance') %}
+        Automation of financial data extraction from the Internet. Data engineering using BeautifulSoup, Selenium.
+      {% endcall %}
 
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project3Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project3/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project3/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project3/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project3Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project3Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Weather App</h4>
-            <p>Real-time Weather app dashboard using Flask and OpenWeatherMap API. Includes user email notifications. The user gets the current weather, 5 days forecast and next hourly forecast for rain previson. An interactive graph of the temperature and wind (min, max and avg) forecast is displayed.</p>
-            <a href="https://github.com/ValerieVienne/weather-app" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Weather App'
-            });">GitHub</a>
-            <a href="https://weather-app-mfea.onrender.com/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
-      
-      
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project1Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project1/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project1/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project1/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project1Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project1Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Financial Milestone Explorer</h4>
-            <p>Financial Milestone Simulator A clean, interactive decision tool built with Python and Streamlit that visualizes the path to major life goals like home ownership and financial independence. By modeling dynamic income and investment scenarios, the app transforms static projections into a real-time "What-If" explorer, allowing users to see exactly how shifting their savings rate or market returns impacts their timeline to wealth.</p>
-            <a href="https://github.com/yourusername/project1" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Smart Budget App'
-            });">
-            GitHub</a>
-            <a href="https://financial-milestone-explorer.onrender.com/" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
+      {% call project_card(slug='finance-ai', folder='project5', title='Financial Prediction with AI', roles='ai-eng', domain='Finance', wip=True, label='Financial prediction AI') %}
+        AI and Machine Learning project to predict financial information. Data engineering using Yahoo Finance API, Python, Pandas, TA-Lib, Scikit-learn, TensorFlow, XGBoost.
+      {% endcall %}
 
-
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project4Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project4/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project4/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project4/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project4Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project4Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Web Scraper for Finance</h4>
-            <p>#WORK IN PROGRESS: Automation of financial data extraction from Internet. Data engineering using BeautifulSoup, Selenium.</p>
-            <a href="https://github.com/yourusername/project1" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Web Scraper for Finance'
-            });">GitHub</a>
-            <a href="https://demo-link.com" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
-      <div class="card mb-5 shadow-sm">
-        <div class="row g-0">
-          <div class="col-md-6">
-            <!-- Slideshow -->
-            <div id="project5Carousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{ url_for('static', filename='images/project5/shot1.jpg') }}" class="d-block w-100" alt="Screenshot 1">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project5/shot2.jpg') }}" class="d-block w-100" alt="Screenshot 2">
-                </div>
-                <div class="carousel-item">
-                  <img src="{{ url_for('static', filename='images/project5/shot3.jpg') }}" class="d-block w-100" alt="Screenshot 3">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#project5Carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#project5Carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-    
-          <div class="col-md-6 p-4">
-            <h4>Financial Prediction with AI</h4>
-            <p>#WORK IN PROGRESS : IA and Machine Learning	project to predict fiancial information. Data engineering using Yahoo Finance API, Python, Pandas, TA-Lib, Scikit-learn, TensorFlow, XGBoost.</p>
-            <a href="https://github.com/yourusername/project1" target="_blank" class="btn btn-outline-dark btn-sm me-2" onclick="gtag('event', 'click_project_link', {
-              event_category: 'portfolio',
-              event_label: 'Financial prediction AI'
-            });">GitHub</a>
-            <a href="https://demo-link.com" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>
-          </div>
-        </div>
-      </div>
-      
-
+      <p id="no-projects" class="text-center" style="display:none;">No project matches this filter yet.</p>
 
     </div>
-    
-</div>    
+</div>
+
+<script>
+  (function () {
+    const cards = Array.from(document.querySelectorAll('.project-card'));
+    const state = { role: 'all', domain: 'all' };
+
+    // Build the domain buttons from the cards, so new domains appear automatically
+    const domainBox = document.getElementById('domain-buttons');
+    Array.from(new Set(cards.map(c => c.dataset.domain).filter(Boolean))).sort().forEach(d => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-sm btn-outline-secondary filter-btn me-1 mb-1';
+      b.dataset.group = 'domain';
+      b.dataset.value = d;
+      b.textContent = d;
+      domainBox.appendChild(b);
+    });
+
+    function apply() {
+      let visible = 0;
+      cards.forEach(c => {
+        const roles = (c.dataset.roles || '').split(' ');
+        const show = (state.role === 'all' || roles.includes(state.role)) &&
+                     (state.domain === 'all' || c.dataset.domain === state.domain);
+        c.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', state[b.dataset.group] === b.dataset.value);
+      });
+      document.getElementById('no-projects').style.display = visible ? 'none' : '';
+    }
+
+    document.addEventListener('click', e => {
+      const b = e.target.closest('.filter-btn');
+      if (!b) return;
+      state[b.dataset.group] = b.dataset.value;
+      apply();
+    });
+  })();
+</script>
 {% endblock %}

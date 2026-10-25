@@ -76,10 +76,7 @@ def privacy():
 
 @app.route('/projects')
 def projects():
-    my_projects = [
-        {"title": "Chatbot with GPT", "description": "Built with OpenAI API. #WORK IN PROGRESS"},        
-    ]
-    return render_template('projects.html', projects=my_projects)
+    return render_template('projects.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
